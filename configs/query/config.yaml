@@ -1,0 +1,19 @@
+databases:
+  db1:
+    dsn: sqlite:///coolbooks.db
+    keep-connected: false
+    labels:
+      region: us2
+      app: app1
+
+metrics:
+  metric1:
+    type: gauge
+    description: A sample gauge
+
+queries:
+  query1:
+    interval: 5
+    databases: [db1]
+    metrics: [metric1]
+    sql: SELECT COUNT(*) AS metric1 FROM BOOK;

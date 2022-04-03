@@ -1,0 +1,45 @@
+version: '3.9'
+services:
+  prometheus:
+    image: prom/prometheus:v2.34.0
+    container_name: prometheus
+    restart: unless-stopped
+    ports:
+      - 9090:9090
+    command:
+     - --config.file=/etc/prometheus/prometheus.yaml
+    networks:
+      monitoring:
+        aliases:
+          - prometheus
+    volumes:
+      - ./configs/prometheus.yaml:/etc/prometheus/prometheus.yaml:rw
+  query:
+    image: adonato/query-exporter:2.6.1
+    container_name: query
+    restart: unless-stopped
+    ports:
+      - 9560:9560
+    networks:
+      monitoring:
+        aliases:
+          - query
+    volumes:
+      - ./configs/query/config.yaml:/config.yaml:rw
+      - ./coolbooks.db:/coolbooks.db:ro
+    environment:
+      TZ: Europe/Stockholm
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+    networks:
+      monitoring:
+        aliases:
+          - grafana
+networks:
+  monitoring:
+    name: monitoring
+    driver: bridge
